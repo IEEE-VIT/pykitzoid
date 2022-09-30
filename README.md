@@ -30,3 +30,7 @@ Run the following commands from the root of the project directory:
 `git push origin <my-amazing-feature>`
 
 Open your forked repo in your browser and then raise a PR to the `main` branch of this repository!
+
+## Contributing
+
+To start contributing, check out [CONTRIBUTING.md](https://github.com/IEEE-VIT/ToDo-iOS/blob/master/contributing.md). New contributors are always welcome to support this project. If you want something gentle to start with, check out issues labelled  `easy` or `good-first-issue`. Check out issues labelled  `hacktoberfest` if you are up for some fun hacktoberfest goodies! :) 
