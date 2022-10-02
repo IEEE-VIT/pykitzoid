@@ -1,3 +1,7 @@
+<p align="center">
+<img src="banner.jpeg">
+</p>
+
 # Hacktoberfest 2022 with IEEE-VIT :blue_heart:
 This is a repository containing a Python package coded in Go, with the motive of providing ML support.
 
