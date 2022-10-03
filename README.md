@@ -1,5 +1,5 @@
 <p align="center">
-<img src="banner.jpeg">
+<img src="pykitzoid.png">
 </p>
 
 # Hacktoberfest 2022 with IEEE-VIT :blue_heart:
