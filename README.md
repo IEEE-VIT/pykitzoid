@@ -3,6 +3,7 @@
 </p>
 
 # Hacktoberfest 2022 with IEEE-VIT :blue_heart:
+
 This is a repository containing a Python package coded in Go, with the motive of providing ML support.
 
 Support open source software by participating in [Hacktoberfest](https://hacktoberfest.digitalocean.com) and get goodies and a free t-shirt! :blue_heart:
@@ -12,20 +13,21 @@ Support open source software by participating in [Hacktoberfest](https://hacktob
 Kindly consider leaving a :star: if you like the repository and our organisation.
 
 ## Getting Started
-* Fork it.
 
-* Clone your forked repo and move inside it:
+- Fork it.
+
+- Clone your forked repo and move inside it:
 
 `git clone https://github.com/IEEE-VIT/pykitzoid.git && cd pykitzoid`
 
-* Checkout to a new branch to work on an issue:
+- Checkout to a new branch to work on an issue:
 
 `git checkout -b my-amazing-feature`
 
-* Get started working!
+- Get started working!
 
-* Once you're all done coding, it's time to open a PR :)
-Run the following commands from the root of the project directory:
+- Once you're all done coding, it's time to open a PR :)
+  Run the following commands from the root of the project directory:
 
 `git add .`
 
@@ -37,4 +39,8 @@ Open your forked repo in your browser and then raise a PR to the `main` branch o
 
 ## Contributing
 
-To start contributing, check out [CONTRIBUTING.md](https://github.com/IEEE-VIT/ToDo-iOS/blob/master/contributing.md). New contributors are always welcome to support this project. If you want something gentle to start with, check out issues labelled  `easy` or `good-first-issue`. Check out issues labelled  `hacktoberfest` if you are up for some fun hacktoberfest goodies! :) 
+To start contributing, check out [CONTRIBUTING.md](https://github.com/IEEE-VIT/ToDo-iOS/blob/master/contributing.md). New contributors are always welcome to support this project. If you want something gentle to start with, check out issues labelled `easy` or `good-first-issue`. Check out issues labelled `hacktoberfest` if you are up for some fun hacktoberfest goodies! :)
+
+## License
+
+See the [LICENSE](https://github.com/kitrak-rev/pykitzoid/blob/main/LICENSE) file for license rights and limitations (MIT).
