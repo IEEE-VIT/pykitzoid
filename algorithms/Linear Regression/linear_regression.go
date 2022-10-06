@@ -123,9 +123,18 @@ func plot_data_points() {
 // R^2 = (Σ(y_pred - y')^2)/(Σ(y-y')^2)
 // where y_pred is the predicted value for y, y' is the mean
 
-func calculate_r_squared() float32 {
-  // insert code here
-  return 0
+func calculate_r_squared(csv_object [][]float32, slope float32, intercept float32) float32 {
+  var y_mean = mean_of_col(csv_object, 1)
+  var numerator, denominator float32
+
+  for i:=0; i<len(csv_object); i++ {
+    var y_pred = predict_y(csv_object[i][0], slope, intercept)
+    numerator += (y_pred - y_mean) * (y_pred - y_mean)
+    denominator += (csv_object[i][1] - y_mean) * (csv_object[i][1] - y_mean)
+  }
+
+  var r_squared = numerator / denominator
+  return r_squared
 }
 
 // MAIN FUNCTION
@@ -145,6 +154,12 @@ func main() {
 
   // calculate the slope and intercept
   var slope, intercept = calculate_slope_and_intercept(csv_object)
-  var y_pred = predict_y(1, slope, intercept)
-  log.Println(y_pred)
+  
+  // calculate r^2 value
+  var r_squared = calculate_r_squared(csv_object, slope, intercept)
+
+  // print the slope, intercept and r^2 value
+  log.Println("slope: ", slope)
+  log.Println("intercept: ", intercept)
+  log.Println("r^2: ", r_squared)
 }
