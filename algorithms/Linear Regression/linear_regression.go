@@ -8,8 +8,6 @@ import (
   "log"
 )
 
-var _ = strconv.Atoi // todo remove later: silencing unused import error for debugging.
-
 // use the following sample dataset
 /*
 | x     | y     |
@@ -78,9 +76,28 @@ func mean_of_col(arr [][]float32, col_number int) (float32) {
 // // m = (Σ(x - x')(y - y'))/(Σ(x-x')^2)
 // // where x' and y' are the means of x and y respectively
 
-func calculate_slope_and_intercept(csv_object [][]string) (float32, float32) {
-  // insert code here
-  return 0, 0
+func calculate_slope_and_intercept(csv_object [][]float32) (float32, float32) {
+  var numerator, denominator float32
+  numerator = 0
+  denominator = 0
+
+  // calculate the mean of x and y
+  var x_mean, y_mean float32
+  x_mean = mean_of_col(csv_object, 0)
+  y_mean = mean_of_col(csv_object, 1)
+
+  // calculate the numerator and denominator
+  for i:=0; i<len(csv_object); i++ {
+    numerator += (csv_object[i][0] - x_mean) * (csv_object[i][1] - y_mean)
+    denominator += (csv_object[i][0] - x_mean) * (csv_object[i][0] - x_mean)
+  }
+
+  // calculate the slope and intercept
+  var slope, intercept float32
+  slope = numerator / denominator
+  intercept = y_mean - slope * x_mean
+
+  return slope, intercept
 }
 
 // function to plot regression line
@@ -121,9 +138,8 @@ func main() {
     log.Fatal(err)
   }
 
-  // calculate mean
-  var x_mean, y_mean float32
-  x_mean = mean_of_col(csv_object, 0)
-  y_mean = mean_of_col(csv_object, 1)
-  log.Println(x_mean, y_mean)
+  // calculate the slope and intercept
+  var slope, intercept = calculate_slope_and_intercept(csv_object)
+  log.Println("Slope: ", slope)
+  log.Println("Intercept: ", intercept)
 }
