@@ -4,8 +4,8 @@ package main
 import (
   "encoding/csv"
   "strconv"
-  "fmt"
   "os"
+  "log"
 )
 
 // use the following sample dataset
@@ -24,40 +24,51 @@ import (
 // FUNCTION DEFINITION
 // add parameters and change the return type as necessary
 
-
-// function to calculate the mean of x and y
-
-func mean(csv_file_path string) (float32, float32) {
-
-  var x, y float32
-  x = 0
-  y = 0
-  
-  //Check if file path is valid
-  fd, error := os.Open(csv_file_path)
-  if error != nil {
-    fmt.Println(error)
+// function to read a csv and return the csv reader object
+func read_csv(filename string) ([][]float32, error) {
+  // Read the file into a string
+  // if error occurs, return an empty slice and the error
+  f, err := os.Open(filename)
+  if err != nil {
+    return nil, err
   }
-  //fmt.Println("File path valid!")
-  defer fd.Close()
+  defer f.Close()
 
-  //Read the contents of the CSV file
-  fileReader := csv.NewReader(fd)
-  records, error := fileReader.ReadAll()
-  if error != nil {
-    fmt.Println(error)
+  // Create a new reader to evaluate the file as a csv
+  // if error occurs, return an empty slice and the error
+  lines, err := csv.NewReader(f).ReadAll()
+  if err != nil {
+    return nil, err
   }
 
-  //fmt.Println(records)
-  for row:=0; row<len(records); row++ {
-      x_val, _ := strconv.ParseFloat(records[row][0], 32)
-      y_val, _ := strconv.ParseFloat(records[row][1], 32)
-      x += float32(x_val)
-      y += float32(y_val)
+  //convert the string array to float array
+  var lines_converted [][]float32
+  for i:=0; i<len(lines); i++ {
+    temp1, err := strconv.ParseFloat(lines[i][0], 32)
+    if err != nil {
+      log.Fatal(err)
+    }
+    temp2, err := strconv.ParseFloat(lines[i][1], 32)
+    if err != nil {
+      log.Fatal(err)
+    }
+    lines_converted = append(lines_converted, []float32{float32(temp1), float32(temp2)})
   }
-  
-  return x/float32(len(records)) , y/float32(len(records))
+  return lines_converted, nil
 }
+
+// function to calculate the mean of a specified column
+func mean_of_col(arr [][]float32, col_number int) (float32) {
+  // calculate the sum of the array
+  var calculated_mean_value float32
+  calculated_mean_value = 0
+  for i:=0; i<len(arr); i++ {
+    calculated_mean_value += arr[i][col_number]
+  }
+  calculated_mean_value = calculated_mean_value / float32(len(arr))
+  return calculated_mean_value
+}
+
 
 // function to calculate slope m and intercept c using the required formula
 
@@ -65,8 +76,28 @@ func mean(csv_file_path string) (float32, float32) {
 // // m = (Σ(x - x')(y - y'))/(Σ(x-x')^2)
 // // where x' and y' are the means of x and y respectively
 
-func calculate_slope_and_intercept() (float32, float32) {
-  // insert code here
+func calculate_slope_and_intercept(csv_object [][]float32) (float32, float32) {
+  var numerator, denominator float32
+  numerator = 0
+  denominator = 0
+
+  // calculate the mean of x and y
+  var x_mean, y_mean float32
+  x_mean = mean_of_col(csv_object, 0)
+  y_mean = mean_of_col(csv_object, 1)
+
+  // calculate the numerator and denominator
+  for i:=0; i<len(csv_object); i++ {
+    numerator += (csv_object[i][0] - x_mean) * (csv_object[i][1] - y_mean)
+    denominator += (csv_object[i][0] - x_mean) * (csv_object[i][0] - x_mean)
+  }
+
+  // calculate the slope and intercept
+  var slope, intercept float32
+  slope = numerator / denominator
+  intercept = y_mean - slope * x_mean
+
+  return slope, intercept
 }
 
 // function to plot regression line
@@ -89,12 +120,26 @@ func plot_data_points() {
 
 func calculate_r_squared() float32 {
   // insert code here
+  return 0
 }
 
 // MAIN FUNCTION
 
 func main() {
-  var x_mean, y_mean float32
-  x_mean, y_mean = mean("sample_data.csv")
-  fmt.Println(x_mean, y_mean)
+  // define the csv file path
+  var filepath string
+  filepath = "sample_data.csv"
+
+  // read the csv file into a file reader object
+  var csv_object, err = read_csv(filepath)
+
+  // if error occurs, print the error and exit
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  // calculate the slope and intercept
+  var slope, intercept = calculate_slope_and_intercept(csv_object)
+  log.Println("Slope: ", slope)
+  log.Println("Intercept: ", intercept)
 }
