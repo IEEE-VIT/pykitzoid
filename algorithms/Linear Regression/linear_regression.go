@@ -1,5 +1,12 @@
 package main
+
 // import whatever packages you will require here
+import (
+  "encoding/csv"
+  "strconv"
+  "fmt"
+  "os"
+)
 
 // use the following sample dataset
 /*
@@ -20,8 +27,36 @@ package main
 
 // function to calculate the mean of x and y
 
-func mean() float32 {
-  // insert code here
+func mean(csv_file_path string) (float32, float32) {
+
+  var x, y float32
+  x = 0
+  y = 0
+  
+  //Check if file path is valid
+  fd, error := os.Open(csv_file_path)
+  if error != nil {
+    fmt.Println(error)
+  }
+  //fmt.Println("File path valid!")
+  defer fd.Close()
+
+  //Read the contents of the CSV file
+  fileReader := csv.NewReader(fd)
+  records, error := fileReader.ReadAll()
+  if error != nil {
+    fmt.Println(error)
+  }
+
+  //fmt.Println(records)
+  for row:=0; row<len(records); row++ {
+      x_val, _ := strconv.ParseFloat(records[row][0], 32)
+      y_val, _ := strconv.ParseFloat(records[row][1], 32)
+      x += float32(x_val)
+      y += float32(y_val)
+  }
+  
+  return x/float32(len(records)) , y/float32(len(records))
 }
 
 // function to calculate slope m and intercept c using the required formula
@@ -59,5 +94,7 @@ func calculate_r_squared() float32 {
 // MAIN FUNCTION
 
 func main() {
-
+  var x_mean, y_mean float32
+  x_mean, y_mean = mean("sample_data.csv")
+  fmt.Println(x_mean, y_mean)
 }
