@@ -100,6 +100,11 @@ func calculate_slope_and_intercept(csv_object [][]float32) (float32, float32) {
   return slope, intercept
 }
 
+func predict_y(x float32, slope float32, intercept float32) float32 {
+  var y_pred = slope * x + intercept
+  return y_pred
+}
+
 // function to plot regression line
 
 func plot_regression_line() {
@@ -140,6 +145,6 @@ func main() {
 
   // calculate the slope and intercept
   var slope, intercept = calculate_slope_and_intercept(csv_object)
-  log.Println("Slope: ", slope)
-  log.Println("Intercept: ", intercept)
+  var y_pred = predict_y(1, slope, intercept)
+  log.Println(y_pred)
 }
