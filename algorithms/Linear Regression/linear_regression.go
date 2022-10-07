@@ -6,6 +6,10 @@ import (
   "strconv"
   "os"
   "log"
+
+  "gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/vg"
 )
 
 // use the following sample dataset
@@ -107,8 +111,35 @@ func predict_y(x float32, slope float32, intercept float32) float32 {
 
 // function to plot regression line
 
-func plot_regression_line() {
+func plot_regression_line(slope float32, intercept float32) {
   // insert code here
+  p := plot.New()
+
+	plotter.DefaultLineStyle.Width = vg.Points(1)
+	plotter.DefaultGlyphStyle.Radius = vg.Points(3)
+
+	p.Y.Tick.Marker = plot.ConstantTicks([]plot.Tick{
+		{Value: 0, Label: "0"}, {Value: float64(predict_y(0.25, slope, intercept)), Label: "5"}, {Value: float64(predict_y(0.5, slope, intercept)), Label: "10"}, {Value: float64(predict_y(0.75, slope, intercept)), Label: "15"}, {Value: float64(predict_y(1, slope, intercept)), Label: "20"},
+	})
+	p.X.Tick.Marker = plot.ConstantTicks([]plot.Tick{
+		{Value: 0, Label: "0"}, {Value: 0.25, Label: "5"}, {Value: 0.5, Label: "10"}, {Value: 0.75, Label: "20"}, {Value: 1, Label: "30"},
+	})
+
+	pts := plotter.XYs{{X: 0, Y: 0}, {X: 0.25, Y: 0.25}, {X: 0.5, Y: 0.5}, {X: 0.75, Y: 0.75}, {X: 1, Y: 1}}
+	line, err := plotter.NewLine(pts)
+	if err != nil {
+		log.Panic(err)
+	}
+	scatter, err := plotter.NewScatter(pts)
+	if err != nil {
+		log.Panic(err)
+	}
+	p.Add(line, scatter)
+
+	err = p.Save(1500, 900, "RegressionLine.png")
+	if err != nil {
+		log.Panic(err)
+	}
 }
 
 // function to plot the data points
@@ -158,6 +189,7 @@ func main() {
   // calculate r^2 value
   var r_squared = calculate_r_squared(csv_object, slope, intercept)
 
+  plot_regression_line(slope, intercept)
   // print the slope, intercept and r^2 value
   log.Println("slope: ", slope)
   log.Println("intercept: ", intercept)
