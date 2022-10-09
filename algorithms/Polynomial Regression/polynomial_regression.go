@@ -1,4 +1,5 @@
 package main
+
 // import whatever packages you will require here
 
 // use the following sample dataset
@@ -25,11 +26,19 @@ func read_csv(filename string) ([][]float32, error) {
 
 // function to calculate weights
 
+// // FORMULA
+// W = Inverse(X' . X) . X' . y
+// where X' is the transpose of X and . denotes dot product
+
 func calc_weights() {
 
 }
 
 // function to predict y values
+
+// // FORMULA
+// y = X . W
+// Where W is the calculated weights and . denotes dot product
 
 func predict_y() {
 
@@ -37,19 +46,19 @@ func predict_y() {
 
 // function to calculate mean
 func mean() {
-	
+
 }
 
 // function to plot regression line
 
 func plot_regression_line() {
-  // insert code here
+	// insert code here
 }
 
 // function to plot the data points
 
 func plot_data_points() {
-  // insert code here
+	// insert code here
 }
 
 // function to calculate R-squared value to measure accuracy of model
@@ -59,7 +68,7 @@ func plot_data_points() {
 // where y_pred is the predicted value for y, y' is the mean
 
 func calculate_r_squared() float32 {
-  // insert code here
+	// insert code here
 }
 
 // MAIN FUNCTION
