@@ -1,6 +1,13 @@
 package main
 
 // import whatever packages you will require here
+import (
+    "bufio"
+    "encoding/csv"
+    "os"
+    "fmt"
+    "io"
+)
 
 // use the following sample dataset
 /*
@@ -20,9 +27,27 @@ package main
 
 // function to read csv file (dataset)
 
-func read_csv(filename string) ([][]float32, error) {
+func read_csv(filename string)  {
+    f, _ := os.Open(filename)
+    r := csv.NewReader(f)
+    for {
+        record, err := r.Read()
+        if err == io.EOF {
+            break
+        }
 
+        if err != nil {
+            panic(err)
+        }
+
+        fmt.Println(record)
+        fmt.Println(len(record))
+        for value := range record {
+            fmt.Printf("  %v\n", record[value])
+        }
+    }
 }
+
 
 // function to calculate weights
 
