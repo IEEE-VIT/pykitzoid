@@ -1,12 +1,12 @@
 <p align="center">
-<img src="pykitzoid.png">
+<img src="https://files.ieeevit.org/Hacktoberfest-23/Pykitzoid.png">
 </p>
 
-# Hacktoberfest 2022 with IEEE-VIT :blue_heart:
+# Hacktoberfest 2023 with IEEE-VIT :blue_heart:
 
 This is a repository containing a Python package coded in Go, with the motive of providing ML support.
 
-Support open source software by participating in [Hacktoberfest](https://hacktoberfest.digitalocean.com) and get goodies and a free t-shirt! :blue_heart:
+Support open source software by participating in [Hacktoberfest](https://hacktoberfest.digitalocean.com) and get goodies and digital badges! :blue_heart:
 
 > Please check all issues labelled as `hacktoberfest` to start contributing!
 
