@@ -92,8 +92,28 @@ func plot_data_points() {
 // R^2 = (Σ(y_pred - y')^2)/(Σ(y-y')^2)
 // where y_pred is the predicted value for y, y' is the mean
 
-func calculate_r_squared() float32 {
-	// insert code here
+func calculate_r_squared(csv_object [][]float32, slope float32, intercept float32) float32 {
+    
+	var xData []float64
+	var yData []float64
+	for i := 0; i < len(csv_object); i++ {
+		xData = append(xData, float64(csv_object[i][0]))
+		yData = append(yData, float64(csv_object[i][1]))
+	}
+
+	// Calculate the mean of the observed values (yData)
+	yMean := mean(yData)
+
+	var numerator, denominator float32
+
+	for i := 0; i < len(csv_object); i++ {
+		y_pred := predict_y(float32(xData[i]), slope, intercept)
+		numerator += (y_pred - float32(yData[i])) * (y_pred - float32(yData[i]))
+		denominator += (csv_object[i][1] - yMean) * (csv_object[i][1] - yMean)
+	}
+
+	r_squared := numerator / denominator
+	return r_squared
 }
 
 // MAIN FUNCTION
