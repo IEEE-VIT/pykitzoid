@@ -70,8 +70,18 @@ func predict_y() {
 }
 
 // function to calculate mean
-func mean() {
+func mean(data []float64) float64 {
+    if len(data) == 0 {
+        return 0.0
+    }
 
+    var sum float64 = 0
+
+    for _, value := range data {
+        sum += value
+    }
+
+    return sum / float64(len(data))
 }
 
 // function to plot regression line
