@@ -1,0 +1,35 @@
+name: Full CI for go code
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: false
+
+      - name: makefile CI
+        run: make build build_demo
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          # this should make this step only install golangci-lint and not run it
+          args: --version
+          version: v1.54
+
+      - name: run golangci-lint on all go.mod directories
+        env:
+          GOLANGCI_LINT_EXTRA_ARGS: --timeout 5m --skip-dirs=vendor --skip-dirs=third_party --skip-dirs=proto --skip-dirs
+        run: |          
+          find . -name go.mod -type f --execdir golangci-lint run ${GO_LINT_EXTRA_ARGS} \;
