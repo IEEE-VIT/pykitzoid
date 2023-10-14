@@ -2,10 +2,13 @@ package main
 
 // import whatever packages you will require here
 import (
-	"encoding/csv"
-	"io"
-	"os"
+	"bufio"
+        "encoding/csv"
+        "os"
+        "fmt"
+        "io"
 	"strconv"
+	
 )
 
 // use the following sample dataset
