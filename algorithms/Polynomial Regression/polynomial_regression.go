@@ -2,11 +2,13 @@ package main
 
 // import whatever packages you will require here
 import (
-    "bufio"
-    "encoding/csv"
-    "os"
-    "fmt"
-    "io"
+	"bufio"
+        "encoding/csv"
+        "os"
+        "fmt"
+        "io"
+	"strconv"
+	
 )
 
 // use the following sample dataset
@@ -26,28 +28,40 @@ import (
 // add parameters and change the return type as necessary
 
 // function to read csv file (dataset)
-
-func read_csv(filename string)  {
-    f, _ := os.Open(filename)
-    r := csv.NewReader(f)
-    for {
-        record, err := r.Read()
-        if err == io.EOF {
-            break
-        }
-
-        if err != nil {
-            panic(err)
-        }
-
-        fmt.Println(record)
-        fmt.Println(len(record))
-        for value := range record {
-            fmt.Printf("  %v\n", record[value])
-        }
-    }
+type DataPoint struct {
+	X float64
+	Y float64
 }
 
+func read_csv(filename string) ([]DataPoint, error) {
+	var dataset []DataPoint
+
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	r := csv.NewReader(f)
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		x, errX := strconv.ParseFloat(record[0], 64)
+		y, errY := strconv.ParseFloat(record[1], 64)
+		if errX == nil && errY == nil {
+			dataPoint := DataPoint{X: x, Y: y}
+			dataset = append(dataset, dataPoint)
+		}
+	}
+
+	return dataset, nil
+}
 
 // function to calculate weights
 
@@ -65,23 +79,35 @@ func calc_weights() {
 // y = X . W
 // Where W is the calculated weights and . denotes dot product
 
-func predict_y() {
+func predict_y(dataset []DataPoint, weights []float64) []float64 {
+	var predictions []float64
 
+	for _, dataPoint := range dataset {
+		x := dataPoint.X
+		y := weights[0]
+		for i := 1; i < len(weights); i++ {
+			y += weights[i] * x
+			x *= dataPoint.X
+		}
+		predictions = append(predictions, y)
+	}
+
+	return predictions
 }
 
 // function to calculate mean
 func mean(data []float64) float64 {
-    if len(data) == 0 {
-        return 0.0
-    }
+	if len(data) == 0 {
+		return 0.0
+	}
 
-    var sum float64 = 0
+	var sum float64 = 0
 
-    for _, value := range data {
-        sum += value
-    }
+	for _, value := range data {
+		sum += value
+	}
 
-    return sum / float64(len(data))
+	return sum / float64(len(data))
 }
 
 // function to plot regression line
@@ -103,7 +129,7 @@ func plot_data_points() {
 // where y_pred is the predicted value for y, y' is the mean
 
 func calculate_r_squared(csv_object [][]float32, slope float32, intercept float32) float32 {
-    
+
 	var xData []float64
 	var yData []float64
 	for i := 0; i < len(csv_object); i++ {
