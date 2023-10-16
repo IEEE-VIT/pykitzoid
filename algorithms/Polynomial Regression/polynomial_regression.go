@@ -3,11 +3,15 @@ package main
 // import whatever packages you will require here
 import (
 	"bufio"
-        "encoding/csv"
-        "os"
-        "fmt"
-        "io"
+    "fmt"
+	"encoding/csv"
+	"io"
+	"os"
 	"strconv"
+
+	"github.com/gonum/plot"
+	"github.com/gonum/plot/plotter"
+	"github.com/gonum/plot/vg"
 	
 )
 
@@ -112,10 +116,52 @@ func mean(data []float64) float64 {
 
 // function to plot regression line
 
-func plot_regression_line() {
-	// insert code here
-}
 
+func plot_regression_line(dataset []DataPoint, weights []float64) error {
+	p, err := plot.New()
+	plotter.NewScatter(dataPoints)
+	if err != nil {
+		return err
+	}
+
+	points := make(plotter.XYs, len(dataset))
+	for i, dp := range dataset {
+		points[i].X = dp.X
+		points[i].Y = dp.Y
+	}
+
+	s, err := plotter.NewScatter(points)
+	if err != nil {
+		return err
+	}
+	p.Add(s)
+
+	xmin := dataset[0].X
+	xmax := dataset[len(dataset)-1].X
+	step := (xmax - xmin) / 100 /
+	regressionLine := make(plotter.XYs, 100)
+	for i := range regressionLine {
+		x := xmin + float64(i)*step
+		y := weights[0]
+		for j := 1; j < len(weights); j++ {
+			y += weights[j] * x
+			x *= x 
+		}
+		regressionLine[i].X = x
+		regressionLine[i].Y = y
+	}
+	l, err := plotter.NewLine(regressionLine)
+	if err != nil {
+		return err
+	}
+	p.Add(l)
+
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, "regression_line.png"); err != nil {
+		return err
+	}
+
+	return nil
+}
 // function to plot the data points
 
 func plot_data_points() {
