@@ -189,17 +189,6 @@ func plot_data_points(x, y []float64, regressionLine plotter.XYs) {
 	}
 }
 
-func main() {
-	x := []float64{1, 2, 3, 4, 5}
-	y := []float64{2, 3, 4, 5, 6}
-	regressionLine := plotter.XYs{
-		{X: 0, Y: 1}, 
-		{X: 6, Y: 7}, 
-	}
-
-	// Call the plot_data_points function
-	plot_data_points(x, y, regressionLine)
-}
 // function to calculate R-squared value to measure accuracy of model
 
 // // FORMULA
