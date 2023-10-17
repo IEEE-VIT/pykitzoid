@@ -163,11 +163,43 @@ func plot_regression_line(dataset []DataPoint, weights []float64) error {
 	return nil
 }
 // function to plot the data points
+func plot_data_points(x, y []float64, regressionLine plotter.XYs) {
+	p, err := plot.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	dataPoints := make(plotter.XYs, len(x))
+	for i := range x {
+		dataPoints[i].X = x[i]
+		dataPoints[i].Y = y[i]
+	}
 
-func plot_data_points() {
-	// insert code here
+	scatter, err := plotter.NewScatter(dataPoints)
+	if err != nil {
+		log.Fatal(err)
+	}
+	line, err := plotter.NewLine(regressionLine)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	p.Add(scatter, line)
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, "scatterplot.png"); err != nil {
+		log.Fatal(err)
+	}
 }
 
+func main() {
+	x := []float64{1, 2, 3, 4, 5}
+	y := []float64{2, 3, 4, 5, 6}
+	regressionLine := plotter.XYs{
+		{X: 0, Y: 1}, 
+		{X: 6, Y: 7}, 
+	}
+
+	// Call the plot_data_points function
+	plot_data_points(x, y, regressionLine)
+}
 // function to calculate R-squared value to measure accuracy of model
 
 // // FORMULA
