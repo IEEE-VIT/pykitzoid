@@ -222,5 +222,17 @@ func calculate_r_squared(csv_object [][]float32, slope float32, intercept float3
 // MAIN FUNCTION
 
 func main() {
+	var filepath string
+	filepath = "sample_data.csv"
+
+	// read the csv file into a file reader object
+	var csv_object, err = read_csv(filepath)
+
+	// if error occurs, print the error and exit
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	plot_data_points(csv_object, "DataPoints.png")
 
 }
