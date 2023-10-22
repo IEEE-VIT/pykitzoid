@@ -2,11 +2,17 @@ package main
 
 // import whatever packages you will require here
 import (
-    "bufio"
-    "encoding/csv"
-    "os"
+	"bufio"
     "fmt"
-    "io"
+	"encoding/csv"
+	"io"
+	"os"
+	"strconv"
+
+	"github.com/gonum/plot"
+	"github.com/gonum/plot/plotter"
+	"github.com/gonum/plot/vg"
+	
 )
 
 // use the following sample dataset
@@ -26,28 +32,40 @@ import (
 // add parameters and change the return type as necessary
 
 // function to read csv file (dataset)
-
-func read_csv(filename string)  {
-    f, _ := os.Open(filename)
-    r := csv.NewReader(f)
-    for {
-        record, err := r.Read()
-        if err == io.EOF {
-            break
-        }
-
-        if err != nil {
-            panic(err)
-        }
-
-        fmt.Println(record)
-        fmt.Println(len(record))
-        for value := range record {
-            fmt.Printf("  %v\n", record[value])
-        }
-    }
+type DataPoint struct {
+	X float64
+	Y float64
 }
 
+func read_csv(filename string) ([]DataPoint, error) {
+	var dataset []DataPoint
+
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	r := csv.NewReader(f)
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		x, errX := strconv.ParseFloat(record[0], 64)
+		y, errY := strconv.ParseFloat(record[1], 64)
+		if errX == nil && errY == nil {
+			dataPoint := DataPoint{X: x, Y: y}
+			dataset = append(dataset, dataPoint)
+		}
+	}
+
+	return dataset, nil
+}
 
 // function to calculate weights
 
@@ -65,35 +83,110 @@ func calc_weights() {
 // y = X . W
 // Where W is the calculated weights and . denotes dot product
 
-func predict_y() {
+func predict_y(dataset []DataPoint, weights []float64) []float64 {
+	var predictions []float64
 
+	for _, dataPoint := range dataset {
+		x := dataPoint.X
+		y := weights[0]
+		for i := 1; i < len(weights); i++ {
+			y += weights[i] * x
+			x *= dataPoint.X
+		}
+		predictions = append(predictions, y)
+	}
+
+	return predictions
 }
 
 // function to calculate mean
 func mean(data []float64) float64 {
-    if len(data) == 0 {
-        return 0.0
-    }
+	if len(data) == 0 {
+		return 0.0
+	}
 
-    var sum float64 = 0
+	var sum float64 = 0
 
-    for _, value := range data {
-        sum += value
-    }
+	for _, value := range data {
+		sum += value
+	}
 
-    return sum / float64(len(data))
+	return sum / float64(len(data))
 }
 
 // function to plot regression line
 
-func plot_regression_line() {
-	// insert code here
+
+func plot_regression_line(dataset []DataPoint, weights []float64) error {
+	p, err := plot.New()
+	plotter.NewScatter(dataPoints)
+	if err != nil {
+		return err
+	}
+
+	points := make(plotter.XYs, len(dataset))
+	for i, dp := range dataset {
+		points[i].X = dp.X
+		points[i].Y = dp.Y
+	}
+
+	s, err := plotter.NewScatter(points)
+	if err != nil {
+		return err
+	}
+	p.Add(s)
+
+	xmin := dataset[0].X
+	xmax := dataset[len(dataset)-1].X
+	step := (xmax - xmin) / 100 /
+	regressionLine := make(plotter.XYs, 100)
+	for i := range regressionLine {
+		x := xmin + float64(i)*step
+		y := weights[0]
+		for j := 1; j < len(weights); j++ {
+			y += weights[j] * x
+			x *= x 
+		}
+		regressionLine[i].X = x
+		regressionLine[i].Y = y
+	}
+	l, err := plotter.NewLine(regressionLine)
+	if err != nil {
+		return err
+	}
+	p.Add(l)
+
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, "regression_line.png"); err != nil {
+		return err
+	}
+
+	return nil
 }
-
 // function to plot the data points
+func plot_data_points(x, y []float64, regressionLine plotter.XYs) {
+	p, err := plot.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	dataPoints := make(plotter.XYs, len(x))
+	for i := range x {
+		dataPoints[i].X = x[i]
+		dataPoints[i].Y = y[i]
+	}
 
-func plot_data_points() {
-	// insert code here
+	scatter, err := plotter.NewScatter(dataPoints)
+	if err != nil {
+		log.Fatal(err)
+	}
+	line, err := plotter.NewLine(regressionLine)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	p.Add(scatter, line)
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, "scatterplot.png"); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // function to calculate R-squared value to measure accuracy of model
@@ -103,7 +196,7 @@ func plot_data_points() {
 // where y_pred is the predicted value for y, y' is the mean
 
 func calculate_r_squared(csv_object [][]float32, slope float32, intercept float32) float32 {
-    
+
 	var xData []float64
 	var yData []float64
 	for i := 0; i < len(csv_object); i++ {
@@ -129,5 +222,17 @@ func calculate_r_squared(csv_object [][]float32, slope float32, intercept float3
 // MAIN FUNCTION
 
 func main() {
+	var filepath string
+	filepath = "sample_data.csv"
+
+	// read the csv file into a file reader object
+	var csv_object, err = read_csv(filepath)
+
+	// if error occurs, print the error and exit
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	plot_data_points(csv_object, "DataPoints.png")
 
 }
