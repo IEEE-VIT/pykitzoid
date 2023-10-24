@@ -34,4 +34,8 @@ jobs:
         env:
           GOLANGCI_LINT_EXTRA_ARGS: --timeout 5m --skip-dirs=vendor --skip-dirs=third_party --skip-dirs=proto --skip-dirs
         run: |          
-          find . -name go.mod -type f --execdir golangci-lint run ${GO_LINT_EXTRA_ARGS} \;
+          find . \
+          -name go.mod \
+          -type f \
+          -execdir \
+          golangci-lint run ${GO_LINT_EXTRA_ARGS} \;
