@@ -203,6 +203,7 @@ func calculate_r_squared(csv_object [][]float32, slope float32, intercept float3
 // MAIN FUNCTION
 
 func main() {
+
 	// define the csv file path
 	var filepath string
 	filepath = "sample_data.csv"
