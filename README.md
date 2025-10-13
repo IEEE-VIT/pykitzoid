@@ -1,6 +1,6 @@
-<p align="center">
-<img src="https://files.ieeevit.org/Hacktoberfest-23/Pykitzoid.png">
-</p>
+# pykitzoid
+
+![Hacktoberfest 2025 banner](./pykitzoid_hacktoberfest.png)
 
 # Hacktoberfest 2023 with IEEE-VIT :blue_heart:
 
