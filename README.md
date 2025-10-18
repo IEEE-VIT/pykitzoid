@@ -2,7 +2,7 @@
 
 ![Hacktoberfest 2025 banner](./pykitzoid_hacktoberfest.png)
 
-# Hacktoberfest 2023 with IEEE-VIT :blue_heart:
+# Hacktoberfest 2025 with IEEE-VIT :blue_heart:
 
 This is a repository containing a Python package coded in Go, with the motive of providing ML support.
 
