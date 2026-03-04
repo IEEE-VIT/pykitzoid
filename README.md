@@ -2,82 +2,91 @@
 
 ![Hacktoberfest 2025 banner](./pykitzoid_hacktoberfest.png)
 
-# Hacktoberfest 2025 with IEEE-VIT :blue_heart:
+## Hacktoberfest 2025 with IEEE-VIT
 
-This is a repository containing a Python package coded in Go, with the motive of providing ML support.
+`pykitzoid` is an educational repository for machine learning implementations in Go, with Python-facing demos and wrappers where useful.
 
-Support open source software by participating in [Hacktoberfest](https://hacktoberfest.digitalocean.com) and get goodies and digital badges! :blue_heart:
+Support open source by participating in [Hacktoberfest](https://hacktoberfest.digitalocean.com).
 
-> Please check all issues labelled as `hacktoberfest` to start contributing!
+> Check issues labeled `hacktoberfest`, `good first issue`, or `documentation` to start contributing.
 
-Kindly consider leaving a :star: if you like the repository and our organisation.
 ## Project Goals
 
-### **Purpose**
+- Build clear, well-documented ML building blocks in Go.
+- Keep examples small and runnable on local machines.
+- Make contribution flow friendly for first-time contributors.
+- Bridge Go implementations with Python usage patterns for learning.
 
-- Provide clear, well-documented building blocks for ML (data handling, simple models, utilities) implemented primarily in **Go**, with optional Python access points.  
+## Repository Structure
 
-### **Scope**
+- `algorithms/`: core algorithm implementations and sample datasets.
+- `demo/`: demo Go library and Python script that loads the shared object.
+- `src/`: Python package scaffolding.
+- `Makefile`: helper targets for build and cleanup.
 
-- Small, focused algorithms and demos you can run **locally**.  
-- Friendly for first-time contributors: readable code, bite-sized issues, and a straightforward workflow.
+## Local Usage
 
-### **Target Audience**
+### Prerequisites
 
-- Students & self-learners who want to understand “how it works under the hood.”  
-- Hacktoberfest / open-source contributors who prefer approachable issues.  
-- Practitioners curious about Go in ML pipelines.
+- Go (1.20+ recommended)
+- Python (3.10+ recommended)
+- `make`
 
-## Key Features & Overview
+### Run the demo
 
-- **Go-first implementations**  
-  The project’s core is in Go (currently ~93% Go). This keeps binaries fast and the code explicit/learnable.  
-  [View on GitHub → IEEE-VIT/pykitzoid](https://github.com/IEEE-VIT/pykitzoid.git)
+```bash
+make build_demo
+python3 demo/demo_app.py
+```
 
-- **Python wrapper (work-in-progress)**  
-  A thin Python interface (see `pyproject.toml`) is scaffolded so users can experiment from notebooks while the logic stays in Go.  
-  [View pyproject.toml](https://github.com/IEEE-VIT/pykitzoid/blob/main/pyproject.toml)
+This builds `demo/build/library.so` from `demo/library.go` and executes the Python ctypes demo.
 
-- **Self-contained demos**  
-  The `demo/` directory includes runnable examples that show how to use the library end-to-end. (Add more demos as algorithms land.)  
-  [View demo folder](https://github.com/IEEE-VIT/pykitzoid/tree/main/demo)
+### Build algorithm shared libraries
 
-- **Contributor-friendly defaults**
-  - A `Makefile` with handy targets (build/test/format) for a smooth DX.  
-    [View Makefile](https://github.com/IEEE-VIT/pykitzoid/blob/main/Makefile)
-  - Clear [CONTRIBUTING guidelines](https://github.com/IEEE-VIT/pykitzoid/blob/main/CONTRIBUTING.md).  
-  - MIT-licensed. [View License](https://github.com/IEEE-VIT/pykitzoid/blob/main/LICENSE)
+```bash
+make build
+ls src/bin
+```
 
+This compiles Go sources under `algorithms/` into shared libraries in `src/bin/`.
 
-## Getting Started
+### Clean build artifacts
 
-- Fork it.
+```bash
+make clear      # remove src/bin/*
+make clearall   # remove src/bin/* and demo/build/*
+```
 
-- Clone your forked repo and move inside it:
+## Getting Started as a Contributor
 
-`git clone https://github.com/IEEE-VIT/pykitzoid.git && cd pykitzoid`
+1. Fork this repository.
+2. Clone your fork:
 
-- Checkout to a new branch to work on an issue:
+```bash
+git clone https://github.com/<your-username>/pykitzoid.git
+cd pykitzoid
+```
 
-`git checkout -b my-amazing-feature`
+3. Create a branch:
 
-- Get started working!
+```bash
+git checkout -b docs/improve-readme
+```
 
-- Once you're all done coding, it's time to open a PR :)
-  Run the following commands from the root of the project directory:
+4. Make changes, then commit and push:
 
-`git add .`
+```bash
+git add .
+git commit -m "docs: improve README"
+git push origin docs/improve-readme
+```
 
-`git commit -m "A short description about the feature."`
-
-`git push origin <my-amazing-feature>`
-
-Open your forked repo in your browser and then raise a PR to the `main` branch of this repository!
+5. Open a pull request against the `main` branch.
 
 ## Contributing
 
-To start contributing, check out [CONTRIBUTING.md](https://github.com/IEEE-VIT/ToDo-iOS/blob/master/contributing.md). New contributors are always welcome to support this project. If you want something gentle to start with, check out issues labelled `easy` or `good-first-issue`. Check out issues labelled `hacktoberfest` if you are up for some fun hacktoberfest goodies! :)
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines and workflow.
 
 ## License
 
-See the [LICENSE](https://github.com/kitrak-rev/pykitzoid/blob/main/LICENSE) file for license rights and limitations (MIT).
+Distributed under the [MIT License](./LICENSE).
