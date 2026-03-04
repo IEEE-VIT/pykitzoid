@@ -76,8 +76,8 @@ Open your forked repo in your browser and then raise a PR to the `main` branch o
 
 ## Contributing
 
-To start contributing, check out [CONTRIBUTING.md](https://github.com/IEEE-VIT/ToDo-iOS/blob/master/contributing.md). New contributors are always welcome to support this project. If you want something gentle to start with, check out issues labelled `easy` or `good-first-issue`. Check out issues labelled `hacktoberfest` if you are up for some fun hacktoberfest goodies! :)
+To start contributing, check out [CONTRIBUTING.md](./CONTRIBUTING.md). New contributors are always welcome to support this project. If you want something gentle to start with, check out issues labelled `easy` or `good-first-issue`. Check out issues labelled `hacktoberfest` if you are up for some fun hacktoberfest goodies! :)
 
 ## License
 
-See the [LICENSE](https://github.com/kitrak-rev/pykitzoid/blob/main/LICENSE) file for license rights and limitations (MIT).
+See the [LICENSE](https://github.com/IEEE-VIT/pykitzoid/blob/main/LICENSE) file for license rights and limitations (MIT).

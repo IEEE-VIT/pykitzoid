@@ -4,7 +4,20 @@ This document contains certain rules and guidelines that developers are expected
 
 ---
 
-## 1. Commit Messages
+## 1. Local Setup
+
+1. Fork the repository and clone your fork:
+   - `git clone https://github.com/<your-username>/pykitzoid.git`
+   - `cd pykitzoid`
+2. Add the upstream remote:
+   - `git remote add upstream https://github.com/IEEE-VIT/pykitzoid.git`
+3. Create a feature branch:
+   - `git checkout -b fix/<short-description>`
+4. Run project checks before opening a PR:
+   - `make test`
+   - `make lint` (if available)
+
+## 2. Commit Messages
 
 - Use the `-m` flag only for minor changes. The message following the `-m` flag must be of the below format :
 
@@ -33,7 +46,7 @@ This document contains certain rules and guidelines that developers are expected
 - Before opening a PR, make sure you squash all your commits into one single commit using `git rebase` (squash). Instead of having 50 commits that describe 1 feature implementation, there must be one commit that describes everything that has been done so far. You can read up about it [here](https://www.internalpointers.com/post/squash-commits-into-one-git).
   > NOTE: While squashing your commits to write a new one, do not make use of `-m` flag. In this case, a vim editor window shall open. Write a title for the commit within 50-70 characters, leave a line and add an understandable description.
 
-## 2. Issues
+## 3. Issues
 
 - Issues **MUST** be opened any time any of the following events occur:
   1. You want feature enhancements.
@@ -44,7 +57,7 @@ This document contains certain rules and guidelines that developers are expected
 - Feel free to label the issues appropriately.
 - Do not remove the headings (questions in bold) while opening an issue with the given template. Simply append to it.
 
-## 3. Branches and PRs
+## 4. Branches and PRs
 
 - No commits must be made to the `main`/`master` branch directly. The `main`/`master` branch shall only consist of the working code.
 - Developers are expected to work on feature branches, and upon successful development and testing, a PR (pull request) must be opened to merge with `main`/`master`.
@@ -62,19 +75,19 @@ This document contains certain rules and guidelines that developers are expected
   - attemptToFixAuth
   - SomethingRandom
 
-## 4. Discussion Ethics
+## 5. Discussion Ethics
 
 - Developers should be clear and concise while commenting on issues or PR reviews. If needed, one should provide visual reference or a code snippet for everyone involved to properly grasp the context.
 - Everyone should be respectful of everyone's opinion. Any harsh/disrespectful language is **STRICTLY** prohibited and will not be tolerated under any circumstances.
 
-## 5. Coding Ethics
+## 6. Coding Ethics
 
 - Developers are highly encouraged to use comments wherever necessary and make the code self documented.
 - The project structure should be neat and organised. All folders and files should be organised semantically according to their functionality.
 - The name of the folders and files should not be too long but should be as self explanatory as possible.
 - Documentation shall **STRICTLY** have gender neutral terms. Instead of using "he/him" or "she/her", one should use "they/them" or "the user".
 
-## 6. Coding Style Guidelines
+## 7. Coding Style Guidelines
 
 Developers should aim to write clean, maintainable, scalable and testable code. If your code is not testable, that means, it's time to refactor it. The following guidelines might come in handy for this:
 
