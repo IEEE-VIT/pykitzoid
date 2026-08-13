@@ -12,7 +12,7 @@ import (
 	"github.com/gonum/plot"
 	"github.com/gonum/plot/plotter"
 	"github.com/gonum/plot/vg"
-	
+	"gonum.org/v1/gonum/mat"
 )
 
 // use the following sample dataset
@@ -72,9 +72,54 @@ func read_csv(filename string) ([]DataPoint, error) {
 // // FORMULA
 // W = Inverse(X' . X) . X' . y
 // where X' is the transpose of X and . denotes dot product
+func calc_weights(dataset []DataPoint, degree int) ([]float64, error) {
+    n := len(dataset)
+    cols := degree + 1
+    xData := make([]float64, n*cols)
+    yData := make([]float64, n)
 
-func calc_weights() {
+    for i, dp := range dataset {
+        yData[i] = dp.Y
+        
+        val := 1.0
+        for j := 0; j < cols; j++ {
+            xData[i*cols+j] = val
+            val *= dp.X
+        }
+    }
 
+    X := mat.NewDense(n, cols, xData)
+    Y := mat.NewDense(n, 1, yData)
+
+    // X' (Transpose of X)
+    XT := X.T()
+
+    // XtX = X' . X
+    var XtX mat.Dense
+    XtX.Mul(XT, X)
+
+    // XtX_inv = Inverse(X' . X)
+    var XtX_inv mat.Dense
+    err := XtX_inv.Inverse(&XtX)
+    if err != nil {
+        // This triggers if the matrix is singular (cannot be inverted)
+        return nil, fmt.Errorf("matrix inversion failed (singular matrix): %v", err)
+    }
+
+    // XTy = X' . y
+    var XTy mat.Dense
+    XTy.Mul(XT, Y)
+
+    // W = Inverse(X' . X) . (X' . y)
+    var W mat.Dense
+    W.Mul(&XtX_inv, &XTy)
+
+    weights := make([]float64, cols)
+    for i := 0; i < cols; i++ {
+        weights[i] = W.At(i, 0)
+    }
+
+    return weights, nil
 }
 
 // function to predict y values
