@@ -1,0 +1,292 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pykitzoid API",
+    "version": "1.0.0",
+    "description": "Stateless access to the repository linear regression algorithm. Calculations use float32. Maximum body size: 1 MiB."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Check service health",
+        "responses": {
+          "200": {
+            "description": "Service ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/algorithms": {
+      "get": {
+        "summary": "List implemented algorithms",
+        "responses": {
+          "200": {
+            "description": "Algorithm catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "algorithms": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "type": "string"
+                          },
+                          "endpoint": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/linear-regression": {
+      "post": {
+        "summary": "Fit linear regression and predict y values",
+        "description": "At least two distinct x values are required. No model or request data is persisted.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "samples"
+                ],
+                "properties": {
+                  "samples": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 10000,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "x",
+                        "y"
+                      ],
+                      "properties": {
+                        "x": {
+                          "type": "number",
+                          "minimum": -1000000000000000.0,
+                          "maximum": 1000000000000000.0
+                        },
+                        "y": {
+                          "type": "number",
+                          "minimum": -1000000000000000.0,
+                          "maximum": 1000000000000000.0
+                        }
+                      }
+                    }
+                  },
+                  "predict": {
+                    "type": "array",
+                    "maxItems": 10000,
+                    "items": {
+                      "type": "number"
+                    },
+                    "default": []
+                  }
+                }
+              },
+              "example": {
+                "samples": [
+                  {
+                    "x": 1,
+                    "y": 3
+                  },
+                  {
+                    "x": 2,
+                    "y": 5
+                  },
+                  {
+                    "x": 3,
+                    "y": 7
+                  }
+                ],
+                "predict": [
+                  4,
+                  5
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fitted model and predictions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "algorithm",
+                    "slope",
+                    "intercept",
+                    "r_squared",
+                    "sample_count",
+                    "predictions"
+                  ],
+                  "properties": {
+                    "algorithm": {
+                      "type": "string",
+                      "enum": [
+                        "linear-regression"
+                      ]
+                    },
+                    "slope": {
+                      "type": "number"
+                    },
+                    "intercept": {
+                      "type": "number"
+                    },
+                    "r_squared": {
+                      "type": "number",
+                      "nullable": true,
+                      "description": "Null when all training y values are identical."
+                    },
+                    "sample_count": {
+                      "type": "integer"
+                    },
+                    "predictions": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 1 MiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Expected application/json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unsupported numeric scale",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
