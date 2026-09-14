@@ -1,0 +1,35 @@
+name: Go Build, Test and Format
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: algorithms/Linear Regression
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: algorithms/Linear Regression/go.mod
+          cache-dependency-path: algorithms/Linear Regression/go.sum
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./...
+
+      - name: Check formatting
+        run: |
+          go fmt ./...
+          git diff --exit-code -- '*.go'
