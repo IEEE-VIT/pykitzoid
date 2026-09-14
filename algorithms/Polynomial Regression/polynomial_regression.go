@@ -98,6 +98,29 @@ func predict_y(dataset []DataPoint, weights []float64) []float64 {
 
 	return predictions
 }
+// PolynomialRegression represents a trained polynomial regression model.
+type PolynomialRegression struct {
+	Weights []float64
+}
+
+// Predict returns predictions for the given x values.
+func (model PolynomialRegression) Predict(x []float64) []float64 {
+	predictions := make([]float64, len(x))
+
+	for i, value := range x {
+		y := model.Weights[0]
+		power := value
+
+		for j := 1; j < len(model.Weights); j++ {
+			y += model.Weights[j] * power
+			power *= value
+		}
+
+		predictions[i] = y
+	}
+
+	return predictions
+}
 
 // function to calculate mean
 func mean(data []float64) float64 {
