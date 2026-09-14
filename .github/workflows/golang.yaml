@@ -18,7 +18,16 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: '1.21'
-          cache: false
+          cache: false  
+
+        name: Go build
+        run: go build ./...
+
+        name: Go test
+        run: go test ./...
+
+        name: Go fmt
+        run: go fmt ./... 
 
       - name: makefile CI
         run: make build build_demo
