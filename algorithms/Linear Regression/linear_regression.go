@@ -107,6 +107,16 @@ func predict_y(x float32, slope float32, intercept float32) float32 {
 	var y_pred = slope*x + intercept
 	return y_pred
 }
+// LinearRegression represents a trained linear regression model.
+type LinearRegression struct {
+	Slope     float64
+	Intercept float64
+}
+
+// Predict returns the predicted y value for a given x.
+func (model LinearRegression) Predict(x float64) float64 {
+	return model.Slope*x + model.Intercept
+}
 
 // function to plot regression line
 
