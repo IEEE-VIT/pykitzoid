@@ -51,6 +51,13 @@ Kindly consider leaving a :star: if you like the repository and our organisation
 
 ## Getting Started
 
+### HTTP API
+
+Fit linear regression models and request predictions through a versioned JSON API.
+See [API setup, examples, and deployment](docs/API.md), import the
+[Postman collection](docs/pykitzoid.postman_collection.json), or use the
+[OpenAPI specification](docs/openapi.json). A root Dockerfile is included for hosting.
+
 - Fork it.
 
 - Clone your forked repo and move inside it:

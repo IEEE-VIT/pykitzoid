@@ -1,0 +1,120 @@
+{
+  "info": {
+    "name": "Pykitzoid API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Algorithms",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/v1/algorithms"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fit and predict",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/linear-regression",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"samples\": [\n    {\n      \"x\": 1,\n      \"y\": 3\n    },\n    {\n      \"x\": 2,\n      \"y\": 5\n    },\n    {\n      \"x\": 3,\n      \"y\": 7\n    }\n  ],\n  \"predict\": [\n    4,\n    5\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Predictions match y = 2x + 1\", () => { const data = pm.response.json(); pm.expect(data.slope).to.eql(2); pm.expect(data.intercept).to.eql(1); pm.expect(data.predictions).to.eql([9, 11]); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject constant x",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/linear-regression",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"samples\": [\n    {\n      \"x\": 1,\n      \"y\": 2\n    },\n    {\n      \"x\": 1,\n      \"y\": 3\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+.git
+**/__pycache__
+**/*.exe
+**/*.png
+**/*.jpeg
+**/*.csv

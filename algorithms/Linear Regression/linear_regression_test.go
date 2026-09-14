@@ -11,7 +11,9 @@ const testTolerance float32 = 1e-4
 
 func assertFloat32Equal(t *testing.T, name string, got, want float32) {
 	t.Helper()
-	if float32(math.Abs(float64(got-want))) > testTolerance {
+	// Allow float32 rounding at the scale of the expected result, not just near zero.
+	tolerance := float64(testTolerance) + 1e-6*math.Abs(float64(want))
+	if math.IsNaN(float64(got)) || math.IsInf(float64(got), 0) || math.Abs(float64(got)-float64(want)) > tolerance {
 		t.Fatalf("%s = %v, want %v", name, got, want)
 	}
 }

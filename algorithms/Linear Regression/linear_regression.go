@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/IEEE-VIT/pykitzoid/algorithms/Linear_Regression/regression"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
@@ -63,14 +64,7 @@ func read_csv(filename string) ([][]float32, error) {
 
 // function to calculate the mean of a specified column
 func mean_of_col(arr [][]float32, col_number int) float32 {
-	// calculate the sum of the array
-	var calculated_mean_value float32
-	calculated_mean_value = 0
-	for i := 0; i < len(arr); i++ {
-		calculated_mean_value += arr[i][col_number]
-	}
-	calculated_mean_value = calculated_mean_value / float32(len(arr))
-	return calculated_mean_value
+	return regression.MeanOfColumn(arr, col_number)
 }
 
 // function to calculate slope m and intercept c using the required formula
@@ -80,32 +74,11 @@ func mean_of_col(arr [][]float32, col_number int) float32 {
 // // where x' and y' are the means of x and y respectively
 
 func calculate_slope_and_intercept(csv_object [][]float32) (float32, float32) {
-	var numerator, denominator float32
-	numerator = 0
-	denominator = 0
-
-	// calculate the mean of x and y
-	var x_mean, y_mean float32
-	x_mean = mean_of_col(csv_object, 0)
-	y_mean = mean_of_col(csv_object, 1)
-
-	// calculate the numerator and denominator
-	for i := 0; i < len(csv_object); i++ {
-		numerator += (csv_object[i][0] - x_mean) * (csv_object[i][1] - y_mean)
-		denominator += (csv_object[i][0] - x_mean) * (csv_object[i][0] - x_mean)
-	}
-
-	// calculate the slope and intercept
-	var slope, intercept float32
-	slope = numerator / denominator
-	intercept = y_mean - slope*x_mean
-
-	return slope, intercept
+	return regression.CalculateSlopeAndIntercept(csv_object)
 }
 
 func predict_y(x float32, slope float32, intercept float32) float32 {
-	var y_pred = slope*x + intercept
-	return y_pred
+	return regression.PredictY(x, slope, intercept)
 }
 
 // function to plot regression line
@@ -187,17 +160,7 @@ func plot_data_points(csv_object [][]float32, plot_name string) {
 // where y_pred is the predicted value for y, y' is the mean
 
 func calculate_r_squared(csv_object [][]float32, slope float32, intercept float32) float32 {
-	var y_mean = mean_of_col(csv_object, 1)
-	var numerator, denominator float32
-
-	for i := 0; i < len(csv_object); i++ {
-		var y_pred = predict_y(csv_object[i][0], slope, intercept)
-		numerator += (y_pred - y_mean) * (y_pred - y_mean)
-		denominator += (csv_object[i][1] - y_mean) * (csv_object[i][1] - y_mean)
-	}
-
-	var r_squared = numerator / denominator
-	return r_squared
+	return regression.CalculateRSquared(csv_object, slope, intercept)
 }
 
 // MAIN FUNCTION
