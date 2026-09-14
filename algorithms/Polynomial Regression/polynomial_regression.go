@@ -1,238 +1,144 @@
 package main
 
-// import whatever packages you will require here
 import (
-	"bufio"
+    "encoding/csv"
     "fmt"
-	"encoding/csv"
-	"io"
-	"os"
-	"strconv"
+    "log"
+    "math"
+    "os"
+    "strconv"
 
-	"github.com/gonum/plot"
-	"github.com/gonum/plot/plotter"
-	"github.com/gonum/plot/vg"
-	
+    "gonum.org/v1/gonum/mat"
 )
 
-// use the following sample dataset
-/*
-| x     | y     |
-|-------|-------|
-| 4512  | 1530  |
-| 3738  | 1297  |
-| 4261  | 1335  |
-| 3777  | 1282  |
-| 4177  | 1590  |
-*/
-
-// expect the dataset to be in csv form
-
-// FUNCTION DEFINITION
-// add parameters and change the return type as necessary
-
-// function to read csv file (dataset)
+// ---------- Data Structures ----------
 type DataPoint struct {
-	X float64
-	Y float64
+    X float64
+    Y float64
 }
 
-func read_csv(filename string) ([]DataPoint, error) {
-	var dataset []DataPoint
-
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	r := csv.NewReader(f)
-	for {
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		x, errX := strconv.ParseFloat(record[0], 64)
-		y, errY := strconv.ParseFloat(record[1], 64)
-		if errX == nil && errY == nil {
-			dataPoint := DataPoint{X: x, Y: y}
-			dataset = append(dataset, dataPoint)
-		}
-	}
-
-	return dataset, nil
+// LinearModel wraps learned weights and exposes Predict methods.
+type LinearModel struct {
+    Weights []float64 // [intercept, slope]
 }
 
-// function to calculate weights
-
-// // FORMULA
-// W = Inverse(X' . X) . X' . y
-// where X' is the transpose of X and . denotes dot product
-
-func calc_weights() {
-
+// Predict returns the predicted value for a single input x.
+func (m *LinearModel) Predict(x float64) float64 {
+    y := m.Weights[0] + m.Weights[1]*x
+    return y
 }
 
-// function to predict y values
-
-// // FORMULA
-// y = X . W
-// Where W is the calculated weights and . denotes dot product
-
-func predict_y(dataset []DataPoint, weights []float64) []float64 {
-	var predictions []float64
-
-	for _, dataPoint := range dataset {
-		x := dataPoint.X
-		y := weights[0]
-		for i := 1; i < len(weights); i++ {
-			y += weights[i] * x
-			x *= dataPoint.X
-		}
-		predictions = append(predictions, y)
-	}
-
-	return predictions
+// PredictBatch returns predictions for a slice of inputs.
+func (m *LinearModel) PredictBatch(xs []float64) []float64 {
+    preds := make([]float64, len(xs))
+    for i, x := range xs {
+        preds[i] = m.Predict(x)
+    }
+    return preds
 }
 
-// function to calculate mean
+// ---------- Utilities ----------
+func readCSV(filename string) ([]DataPoint, error) {
+    var dataset []DataPoint
+    f, err := os.Open(filename)
+    if err != nil {
+        return nil, err
+    }
+    defer f.Close()
+
+    r := csv.NewReader(f)
+    for {
+        record, err := r.Read()
+        if err != nil {
+            break
+        }
+        if len(record) < 2 {
+            continue
+        }
+        x, errX := strconv.ParseFloat(record[0], 64)
+        y, errY := strconv.ParseFloat(record[1], 64)
+        if errX == nil && errY == nil {
+            dataset = append(dataset, DataPoint{X: x, Y: y})
+        }
+    }
+    return dataset, nil
+}
+
+// Train a linear regression model using Normal Equation
+func trainLinearModel(dataset []DataPoint) *LinearModel {
+    n := len(dataset)
+    X := mat.NewDense(n, 2, nil)
+    y := mat.NewVecDense(n, nil)
+
+    for i, dp := range dataset {
+        X.Set(i, 0, 1)     // intercept term
+        X.Set(i, 1, dp.X)  // feature
+        y.SetVec(i, dp.Y)
+    }
+
+    var xt mat.Dense
+    xt.Mul(X.T(), X)
+
+    var xtInv mat.Dense
+    if err := xtInv.Inverse(&xt); err != nil {
+        log.Fatal("Matrix not invertible:", err)
+    }
+
+    var xty mat.Dense
+    xty.Mul(X.T(), y)
+
+    var w mat.Dense
+    w.Mul(&xtInv, &xty)
+
+    weights := w.RawMatrix().Data
+    return &LinearModel{Weights: weights}
+}
+
+// R² calculation
+func rSquared(yTrue, yPred []float64) float64 {
+    yMean := mean(yTrue)
+    var ssRes, ssTot float64
+    for i := range yTrue {
+        ssRes += math.Pow(yTrue[i]-yPred[i], 2)
+        ssTot += math.Pow(yTrue[i]-yMean, 2)
+    }
+    return 1 - ssRes/ssTot
+}
+
 func mean(data []float64) float64 {
-	if len(data) == 0 {
-		return 0.0
-	}
-
-	var sum float64 = 0
-
-	for _, value := range data {
-		sum += value
-	}
-
-	return sum / float64(len(data))
+    var sum float64
+    for _, v := range data {
+        sum += v
+    }
+    return sum / float64(len(data))
 }
 
-// function to plot regression line
-
-
-func plot_regression_line(dataset []DataPoint, weights []float64) error {
-	p, err := plot.New()
-	plotter.NewScatter(dataPoints)
-	if err != nil {
-		return err
-	}
-
-	points := make(plotter.XYs, len(dataset))
-	for i, dp := range dataset {
-		points[i].X = dp.X
-		points[i].Y = dp.Y
-	}
-
-	s, err := plotter.NewScatter(points)
-	if err != nil {
-		return err
-	}
-	p.Add(s)
-
-	xmin := dataset[0].X
-	xmax := dataset[len(dataset)-1].X
-	step := (xmax - xmin) / 100 /
-	regressionLine := make(plotter.XYs, 100)
-	for i := range regressionLine {
-		x := xmin + float64(i)*step
-		y := weights[0]
-		for j := 1; j < len(weights); j++ {
-			y += weights[j] * x
-			x *= x 
-		}
-		regressionLine[i].X = x
-		regressionLine[i].Y = y
-	}
-	l, err := plotter.NewLine(regressionLine)
-	if err != nil {
-		return err
-	}
-	p.Add(l)
-
-	if err := p.Save(4*vg.Inch, 4*vg.Inch, "regression_line.png"); err != nil {
-		return err
-	}
-
-	return nil
-}
-// function to plot the data points
-func plot_data_points(x, y []float64, regressionLine plotter.XYs) {
-	p, err := plot.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-	dataPoints := make(plotter.XYs, len(x))
-	for i := range x {
-		dataPoints[i].X = x[i]
-		dataPoints[i].Y = y[i]
-	}
-
-	scatter, err := plotter.NewScatter(dataPoints)
-	if err != nil {
-		log.Fatal(err)
-	}
-	line, err := plotter.NewLine(regressionLine)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	p.Add(scatter, line)
-	if err := p.Save(4*vg.Inch, 4*vg.Inch, "scatterplot.png"); err != nil {
-		log.Fatal(err)
-	}
-}
-
-// function to calculate R-squared value to measure accuracy of model
-
-// // FORMULA
-// R^2 = (Σ(y_pred - y')^2)/(Σ(y-y')^2)
-// where y_pred is the predicted value for y, y' is the mean
-
-func calculate_r_squared(csv_object [][]float32, slope float32, intercept float32) float32 {
-
-	var xData []float64
-	var yData []float64
-	for i := 0; i < len(csv_object); i++ {
-		xData = append(xData, float64(csv_object[i][0]))
-		yData = append(yData, float64(csv_object[i][1]))
-	}
-
-	// Calculate the mean of the observed values (yData)
-	yMean := mean(yData)
-
-	var numerator, denominator float32
-
-	for i := 0; i < len(csv_object); i++ {
-		y_pred := predict_y(float32(xData[i]), slope, intercept)
-		numerator += (y_pred - float32(yData[i])) * (y_pred - float32(yData[i]))
-		denominator += (csv_object[i][1] - yMean) * (csv_object[i][1] - yMean)
-	}
-
-	r_squared := numerator / denominator
-	return r_squared
-}
-
-// MAIN FUNCTION
-
+// ---------- Main ----------
 func main() {
-	var filepath string
-	filepath = "sample_data.csv"
+    // Example dataset file
+    filepath := "sample_data.csv"
 
-	// read the csv file into a file reader object
-	var csv_object, err = read_csv(filepath)
+    dataset, err := readCSV(filepath)
+    if err != nil {
+        log.Fatal(err)
+    }
 
-	// if error occurs, print the error and exit
-	if err != nil {
-		log.Fatal(err)
-	}
+    // Train model
+    model := trainLinearModel(dataset)
+    fmt.Printf("Intercept: %.4f, Slope: %.4f\n", model.Weights[0], model.Weights[1])
 
-	plot_data_points(csv_object, "DataPoints.png")
+    // Predictions
+    yTrue := make([]float64, len(dataset))
+    for i, dp := range dataset {
+        yTrue[i] = dp.Y
+    }
+    yPred := model.PredictBatch(yTrue) // predict using same Xs
 
+    // Evaluate
+    r2 := rSquared(yTrue, yPred)
+    fmt.Printf("R²: %.4f\n", r2)
+
+    // Predict new values
+    fmt.Println("Predict(4512):", model.Predict(4512))
+    fmt.Println("PredictBatch([3738, 4261, 3777]):", model.PredictBatch([]float64{3738, 4261, 3777}))
 }
